@@ -88,12 +88,18 @@ JOIN LOP L ON LL.MALOAI = L.MALOAI
 JOIN PHIEUTHU P ON L.MALOP = P.MALOP
 WHERE LL.TENLOAI = 'Tiếng Anh căn bản' AND L.TENLOP = 'Lớp 2';
 
--- 18. 
+-- 18. Tính tổng số tiền đã thu được của 'khóa 1'
+SELECT SUM(P.THANHTIEN) TONGTIENKHOA1 FROM KHOAHOC K
+JOIN LOP L ON K.MAKH = L.MAKH
+JOIN PHIEUTHU P ON L.MALOP = P.MALOP
+WHERE K.TENKH = 'Khóa 1';
 
+-- 19. Tính điểm trung bình của học viên 'Đỗ Gia Bảo', sinh ngày 02/12/2001 học 'lớp 1' Tiếng anh căn bản ?
+SELECT AVG(D.DIEM) DIEMTB FROM HOCVIEN H
+JOIN DIEM D ON H.MAHV = D.MAHV
+JOIN LOP L ON D.MALOP = L.MALOP
+WHERE H.TENHV = 'Đỗ Gia Bảo' AND H.NGAYSINH = TO_DATE('02/12/2001', 'DD/MM/YYYY') AND L.TENLOP = 'Lớp 1';
 
-
-
-
-
-
+-- 20. Tìm điểm lớn nhất
+SELECT MAX(DIEM) DIEMLONNHAT FROM DIEM;
 
