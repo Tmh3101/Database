@@ -67,6 +67,28 @@ JOIN PHIEUTHU P ON L.MALOP = P.MALOP
 WHERE LL.TENLOAI = 'Tiếng Anh A1';
 
 -- 14. Tìm họ tên học viên, tên môn và điểm thi các môn của các học viên học 'khóa 1'
+SELECT H.TENHV, M.TENMH, D.DIEM FROM KHOAHOC K
+JOIN LOP L ON K.MAKH = L.MAKH
+JOIN DIEM D ON L.MALOP = D.MALOP
+JOIN HOCVIEN H ON D.MAHV = H.MAHV
+JOIN MONHOC M ON D.MAMH = M.MAMH
+WHERE K.TENKH = 'Khóa 1';
+
+-- 15. Có tất cả bao nhiêu học viên?
+SELECT COUNT(MAHV) SOHOCVIEN FROM HOCVIEN;
+
+-- 16. 'Lớp 1' Tiếng anh căn bản có bao nhiêu học viên
+SELECT L.SISO FROM LOAILOP LL
+JOIN LOP L ON LL.MALOAI = L.MALOAI
+WHERE LL.TENLOAI = 'Tiếng Anh căn bản' AND L.TENLOP = 'Lớp 1';
+
+-- 17. Tính tổng số tiền đã thu được của 'lớp 2' Tiếng anh căn bản
+SELECT SUM(P.THANHTIEN) TONGTIEN FROM LOAILOP LL
+JOIN LOP L ON LL.MALOAI = L.MALOAI
+JOIN PHIEUTHU P ON L.MALOP = P.MALOP
+WHERE LL.TENLOAI = 'Tiếng Anh căn bản' AND L.TENLOP = 'Lớp 2';
+
+-- 18. 
 
 
 
