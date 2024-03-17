@@ -61,6 +61,13 @@ JOIN LOP L ON LL.MALOAI = L.MALOAI
 WHERE CT.TENCT = 'Tiếng Anh Tổng Quát';
 
 -- 13. Liệt kê thông tin tất cả các phiếu thu của 'lớp 1' Tiếng Anh A1
+SELECT P.SOPT, P.MAHV, P.MALOP, P.NGAYLAYPHIEU, P.THANHTIEN FROM LOAILOP LL
+JOIN LOP L ON LL.MALOAI = L.MALOAI
+JOIN PHIEUTHU P ON L.MALOP = P.MALOP
+WHERE LL.TENLOAI = 'Tiếng Anh A1';
+
+-- 14. Tìm họ tên học viên, tên môn và điểm thi các môn của các học viên học 'khóa 1'
+
 
 
 
