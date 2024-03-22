@@ -271,7 +271,80 @@ HAVING COUNT(S.NS) = (
 )
 
 -- 22. Tên nhà sản xuất xuất bản nhiều sách nhất
+SELECT NXB FROM SACH
+GROUP BY NXB
+HAVING COUNT(NS) = (
+    SELECT MAX(SLS) SLSLN FROM (
+        SELECT NXB, COUNT(NS) SLS FROM SACH
+        GROUP BY NXB
+    )
+)
 
+-- 23. Tính số tác giả có ít nhất hai tác phẩm
+SELECT COUNT(TACGIA) STG FROM (
+    SELECT TACGIA, COUNT(NT) STP FROM TACPHAM
+    GROUP BY TACGIA
+    HAVING COUNT(NT) >= 2
+)
 
+-- 24. Tìm tựa tác phẩm có nhiều người mượn nhất
+SELECT T.TUA FROM SACH S
+JOIN TACPHAM T ON S.NT = T.NT
+WHERE NS = (
+    SELECT NS SCLMNN FROM MUON 
+    GROUP BY NS
+    HAVING COUNT(NGAYMUON) = (
+        SELECT MAX(LANMUON) SLMLN FROM (
+            SELECT NS, COUNT(NGAYMUON) LANMUON FROM MUON
+            GROUP BY NS
+        )
+    )
+)
+
+-- 25. Tìm tựa tác phẩm có ít người mượn nhất
+SELECT T.TUA FROM SACH S
+JOIN TACPHAM T ON S.NT = T.NT
+JOIN (
+    SELECT NS SCLMNN FROM MUON      
+    GROUP BY NS
+    HAVING COUNT(NGAYMUON) = (
+        SELECT MIN(LANMUON) SLMNN FROM (
+            SELECT NS, COUNT(NGAYMUON) LANMUON FROM MUON
+            GROUP BY NS
+        )
+    )
+) TMP ON S.NS = TMP.SCLMNN
+
+-- 26. Tìm độc giả mượn nhiều tác phẩm nhất
+SELECT * FROM DOCGIA
+WHERE ND = (
+    SELECT M.ND FROM MUON M
+    JOIN SACH S ON M.NS = S.NS
+    GROUP BY M.ND
+    HAVING COUNT(S.NT) = (
+        SELECT MAX(STP) STPLN FROM (
+            SELECT COUNT(S.NT) STP FROM MUON M
+            JOIN SACH S ON M.NS = S.NS
+            GROUP BY M.ND
+        )
+    )
+)
+
+-- 27. Tìm tên độc giả mượn ít tác phẩm nhất
+SELECT D.* FROM DOCGIA D
+JOIN (
+    SELECT M.ND FROM MUON M
+    JOIN SACH S ON M.NS = S.NS
+    GROUP BY M.ND
+    HAVING COUNT(S.NT) = (
+        SELECT MIN(STP) STPNN FROM (
+            SELECT COUNT(S.NT) STP FROM MUON M
+            JOIN SACH S ON M.NS = S.NS
+            GROUP BY M.ND
+        )
+    )
+) TMP ON D.ND = TMP.ND
+
+-- 28.Tìm tên tác phẩm có ít nhất một quyển sách không ai mượn
 
 
