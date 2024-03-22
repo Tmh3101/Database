@@ -249,6 +249,28 @@ SELECT T.TUA, TMP.SLS FROM (SELECT NT, COUNT(NS) SLS FROM SACH
 JOIN TACPHAM T ON TMP.NT = T.NT;
 
 -- 19. Tìm số lầm mượn sách của mỗi độc giả theo năm
+SELECT D.TEN, TMP.SLM FROM( SELECT ND, COUNT(*) SLM FROM MUON
+                            GROUP BY ND) TMP
+JOIN DOCGIA D ON TMP.ND = D.ND;
+
+-- 20. Tìm tên tác phẩm có ít nhất 3 sách
+SELECT T.TUA FROM ( SELECT NT FROM SACH
+                    GROUP BY NT
+                    HAVING COUNT(NS) >= 3) TMP
+JOIN TACPHAM T ON TMP.NT = T.NT;
+
+-- 21. Tìm tên tác phẩm có nhiều sách nhất
+SELECT T.TUA, COUNT(S.NS) SLS FROM TACPHAM T
+JOIN SACH S ON T.NT = S.NT
+GROUP BY T.TUA
+HAVING COUNT(S.NS) = (
+    SELECT MAX(SLS) SLSLN FROM (
+        SELECT COUNT(NS) SLS FROM SACH
+        GROUP BY NT
+    ) 
+)
+
+-- 22. Tên nhà sản xuất xuất bản nhiều sách nhất
 
 
 
