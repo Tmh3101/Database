@@ -346,5 +346,38 @@ JOIN (
 ) TMP ON D.ND = TMP.ND
 
 -- 28.Tìm tên tác phẩm có ít nhất một quyển sách không ai mượn
+SELECT T.* FROM TACPHAM T
+LEFT JOIN (
+    SELECT DISTINCT T.TACGIA, T.NT FROM MUON M
+    JOIN SACH S ON M.NS = S.NS
+    JOIN TACPHAM T ON S.NT = T.NT
+) TMP ON T.NT = TMP.NT
+WHERE TMP.NT IS NULL
+
+-- 29. Tìm tên tác phẩm có tất cả các quyển sách đều được mượn
+SELECT T2.TUA FROM TACPHAM T2
+LEFT JOIN (
+    SELECT DISTINCT T.NT FROM TACPHAM T
+    JOIN SACH S ON T.NT = S.NT
+    FULL JOIN (
+        SELECT DISTINCT NS FROM MUON
+    ) TMP ON S.NS = TMP.NS
+    WHERE TMP.NS IS NULL
+) TMP ON T2.NT = TMP.NT
+WHERE TMP.NT IS NULL
+
+--30. Tìm họ tên độc giả chưa mượn quyển sách nào
+SELECT DISTINCT D.HO, D.TEN FROM DOCGIA D
+LEFT JOIN (
+    SELECT DISTINCT ND FROM MUON
+) TMP ON D.ND = TMP.ND
+WHERE TMP.ND IS NULL
+
+-- 31. Tìm thông tin về nhà sản xuất của quyển sách mà chưa được ai mượn
+SELECT S.NXB, S.NS FROM SACH S
+LEFT JOIN (
+    SELECT DISTINCT NS FROM MUON
+) TMP ON S.NS = TMP.NS
+WHERE TMP.NS IS NULL
 
 
