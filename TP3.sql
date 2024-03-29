@@ -151,3 +151,233 @@ INSERT INTO MUON VALUES (25,'8-19-2006','9-2-2006','9-3-2006',1);
 INSERT INTO MUON VALUES (26,'11-15-2006','11-29-2006','11-22-2006',9);
 INSERT INTO MUON VALUES (29,'9-20-2007','10-4-2007', NULL,27);
 
+
+-- 1. Xem dữ liệu của tất cả các bảng
+SELECT * FROM TACPHAM;
+SELECT * FROM DOCGIA;
+SELECT * FROM SACH;
+SELECT * FROM MUON;
+
+-- 2. Vẽ sơ đồ liên thông
+
+-- 3. Các tác phẩm (NT, tua) của tác giả 'Guy de Maupassant'
+SELECT NT, TUA FROM TACPHAM
+WHERE TACGIA = 'Guy de Maupassant';
+
+-- 4. Các độc giả sống ở địa chỉ '32 rue des Alouettes, 75003 Paris'
+SELECT * FROM DOCGIA
+WHERE DCHI = '32 rue des Alouettes, 75003 Paris';
+
+-- 5. Tìm tên nhà xuất bản các tác phẩm bao gồm từ 'Fluer'
+SELECT S.NXB FROM TACPHAM TP
+JOIN SACH S ON TP.NT = S.NT
+WHERE TUA LIKE ('%Fleur%');
+
+-- 6. Tìm tên các tác phẩm bắt đầu bằng chữ 'Le'
+SELECT TUA FROM TACPHAM
+WHERE TUA LIKE ('Le%');
+
+-- 7. Tìm tên các độc giả có mượn sách trong khoảng thời gian từ ngày 15/9/2007 đến 10/09/2007
+SELECT D.TEN FROM MUON M
+JOIN DOCGIA D ON M.ND = D.ND
+WHERE M.NGAYMUON BETWEEN TO_DATE('15/9/2007', 'DD/MM/YYYY') AND TO_DATE('20/9/2007', 'DD/MM/YYYY');
+
+-- 8. Nhà xuất bản của tác phẩm tiêu đề 'Germiral '
+SELECT S.NXB FROM TACPHAM T
+JOIN SACH S ON T.NT = S.NT
+WHERE T.TUA = 'Germinal ';
+
+-- 9. Tên độc giả đã mượn tác phẩm 'Poésie'
+SELECT D.* FROM TACPHAM T
+JOIN SACH S ON T.NT = S.NT
+JOIN MUON M ON S.NS = M.NS
+JOIN DOCGIA D ON M.ND = D.ND
+WHERE T.TUA = 'Po�e';
+
+-- 10. Những độc giả nào đã mượn tác phẩm 'Les Fleurs du mal'
+SELECT D.* FROM TACPHAM T
+JOIN SACH S ON T.NT = S.NT
+JOIN MUON M ON S.NS = M.NS
+JOIN DOCGIA D ON M.ND = D.ND
+WHERE T.TUA = 'Les Fleurs du mal';
+
+
+-- 11. Tìm các tựa sách, tên độc giả của các độc giả trả sách quá thời hạn cho phép
+SELECT T.TUA, D.TEN FROM MUON M
+JOIN SACH S ON M.NS = S.NS
+JOIN TACPHAM T ON S.NT = T.NT
+JOIN DOCGIA D ON M.ND = D.ND
+WHERE M.NGAYTRA > M.HANTRA;
+
+-- 12. Tìm các tựa sách, tên độc giả của các độc giả trả sách thời hạn
+SELECT T.TUA, D.TEN FROM MUON M
+JOIN SACH S ON M.NS = S.NS
+JOIN TACPHAM T ON S.NT = T.NT
+JOIN DOCGIA D ON M.ND = D.ND
+WHERE M.NGAYTRA <= M.HANTRA;
+
+-- 13. Tên dộc giả đã mượn tác phẩn của 'Victor Hugo'
+SELECT D.TEN FROM TACPHAM T
+JOIN SACH S ON T.NT = S.NT
+JOIN MUON M ON S.NS = M.NS
+JOIN DOCGIA D ON M.ND = D.ND
+WHERE T.TACGIA = 'Victor Hugo';
+
+-- 14. Tên dộc giả và các tác phẩm đã được mượn năm 2007
+SELECT D.TEN, T.TUA FROM MUON M
+JOIN DOCGIA D ON M.ND = D.ND
+JOIN SACH S ON M.NS = S.NS
+JOIN TACPHAM T ON S.NT = T.NT
+WHERE EXTRACT(YEAR FROM M.NGAYMUON) = '2007';
+
+-- 15. Tính số tác phẩm co trong thư viện
+SELECT COUNT(*) SOLUONGTACPHAM FROM TACPHAM;
+
+-- 16. Tựa của tác phẩm mà có ít nhất hai quyển sách
+SELECT T.TUA, TMP.SOSACH FROM ( SELECT NT, COUNT(NS) SOSACH FROM SACH
+                                GROUP BY NT
+                                HAVING COUNT(NS) >= 2) TMP
+JOIN TACPHAM T ON TMP.NT = T.NT;
+
+--SELECT S.NT, TUA,COUNT(*) SOSACH
+--FROM SACH S JOIN TACPHAM T ON T.NT=S.NT
+--GROUP BY S.NT, TUA HAVING COUNT(*)>1;
+
+-- 17. Tính số tác phẩm của mỗi tác giả
+SELECT TACGIA, COUNT(NT) SLTP FROM TACPHAM
+GROUP BY TACGIA;
+
+-- 18. Tính số sách của mỗi tác phẩm
+SELECT T.TUA, TMP.SLS FROM (
+    SELECT NT, COUNT(NS) SLS FROM SACH
+    GROUP BY NT
+) TMP
+JOIN TACPHAM T ON TMP.NT = T.NT;
+
+-- 19. Tìm số lầm mượn sách của mỗi độc giả theo năm
+SELECT TMP.NAM, D.TEN, TMP.SLM FROM (
+    SELECT ND, EXTRACT(YEAR FROM NGAYMUON) NAM, COUNT(*) SLM FROM MUON
+    GROUP BY ND, EXTRACT(YEAR FROM NGAYMUON)
+) TMP
+JOIN DOCGIA D ON TMP.ND = D.ND;
+
+-- 20. Tìm tên tác phẩm có ít nhất 3 sách
+SELECT T.TUA FROM (
+    SELECT NT FROM SACH
+    GROUP BY NT
+    HAVING COUNT(NS) >= 3
+) TMP
+JOIN TACPHAM T ON TMP.NT = T.NT;
+
+-- 21. Tìm tên tác phẩm có nhiều sách nhất
+SELECT T.TUA, COUNT(S.NS) SLS FROM SACH S
+JOIN TACPHAM T ON S.NT = T.NT
+GROUP BY T.TUA
+HAVING COUNT(S.NS) >= ALL (
+    SELECT COUNT(NS) SLS FROM SACH
+    GROUP BY NT
+);
+
+-- 22. Tên nhà sản xuất xuất bản nhiều sách nhất
+SELECT NXB, COUNT(NS)SOSACH FROM SACH
+GROUP BY NXB
+HAVING COUNT(NS) > = ALL (
+    SELECT COUNT(NS) SLS FROM SACH
+    GROUP BY NXB
+);
+
+-- 23. Tính số tác giả có ít nhất hai tác phẩm
+SELECT COUNT(TACGIA) STG FROM (
+    SELECT TACGIA, COUNT(NT) STP FROM TACPHAM
+    GROUP BY TACGIA
+    HAVING COUNT(NT) >= 2
+);
+
+-- 24. Tìm tựa tác phẩm có nhiều người mượn nhất
+SELECT S.NT, T.TUA, COUNT(DISTINCT M.ND) SNM FROM TACPHAM T
+JOIN SACH S ON T.NT = S.NT
+JOIN MUON M ON M.NS = S.NS
+GROUP BY S.NT, T.TUA
+HAVING COUNT(DISTINCT M.ND) >= ALL (
+    SELECT COUNT(DISTINCT M.ND) FROM SACH S
+    JOIN MUON M ON M.NS = S.NS
+    GROUP BY S.NT
+);
+
+-- 25. Tìm tựa tác phẩm có ít người mượn nhất
+SELECT S.NT, T.TUA, COUNT(DISTINCT M.ND) SNM FROM TACPHAM T
+JOIN SACH S ON T.NT = S.NT
+JOIN MUON M ON M.NS = S.NS
+GROUP BY S.NT, T.TUA
+HAVING COUNT(DISTINCT M.ND) <= ALL (
+    SELECT COUNT(DISTINCT M.ND) FROM SACH S
+    JOIN MUON M ON M.NS = S.NS
+    GROUP BY S.NT
+);
+
+-- 26. Tìm độc giả mượn nhiều tác phẩm nhất
+SELECT D.TEN, M.ND, COUNT(DISTINCT S.NT) STP FROM MUON M
+JOIN SACH S ON M.NS = S.NS
+JOIN DOCGIA D ON M.ND = D.ND
+GROUP BY D.TEN, M.ND
+HAVING COUNT(DISTINCT S.NT) >= ALL (
+    SELECT COUNT(DISTINCT S.NT) FROM MUON M
+    JOIN SACH S ON M.NS = S.NS
+    GROUP BY M.ND
+);
+
+-- 27. Tìm tên độc giả mượn ít tác phẩm nhất
+SELECT D.TEN, M.ND, COUNT(DISTINCT S.NT) STP FROM MUON M
+JOIN SACH S ON M.NS = S.NS
+JOIN DOCGIA D ON M.ND = D.ND
+GROUP BY D.TEN, M.ND
+HAVING COUNT(DISTINCT S.NT) <= ALL (
+    SELECT COUNT(DISTINCT S.NT) FROM MUON M
+    JOIN SACH S ON M.NS = S.NS
+    GROUP BY M.ND
+);
+
+-- 28.Tìm tên tác phẩm có ít nhất một quyển sách không ai mượn
+SELECT S.NT, T.TUA FROM SACH S
+JOIN TACPHAM T ON S.NT = T.NT
+WHERE S.NS NOT IN (
+    SELECT NS FROM MUON
+);
+
+-- 29. Tìm tên tác phẩm có tất cả các quyển sách đều được mượn
+SELECT NT, TUA FROM TACPHAM
+WHERE NT NOT IN (
+    SELECT S.NT FROM SACH S
+    LEFT JOIN MUON M ON S.NS = M.NS
+    WHERE M.NS IS NULL
+);
+
+--30. Tìm họ tên độc giả chưa mượn quyển sách nào
+SELECT DISTINCT D.HO, D.TEN FROM DOCGIA D
+LEFT JOIN (
+    SELECT DISTINCT ND FROM MUON
+) TMP ON D.ND = TMP.ND
+WHERE TMP.ND IS NULL;
+
+-- CUNG LA CAU 30 NHUNG LA CACH THU 2:
+SELECT D.HO, D.TEN FROM (
+    SELECT ND FROM DOCGIA
+    MINUS
+    SELECT DISTINCT ND FROM MUON
+) TMP
+JOIN DOCGIA D ON TMP.ND = D.ND;
+
+-- 31. Tìm thông tin về nhà sản xuất của quyển sách mà chưa được ai mượn
+SELECT DISTINCT S.NXB FROM SACH S
+LEFT JOIN (
+    SELECT DISTINCT NS FROM MUON
+) TMP ON S.NS = TMP.NS
+WHERE TMP.NS IS NULL;
+
+-- CUNG LA CAU 31 NHUNG LA CACH THU 2:
+SELECT DISTINCT S.NXB FROM (
+    SELECT NS FROM SACH
+    MINUS
+    SELECT DISTINCT NS FROM MUON
+) TMP
+JOIN SACH S ON TMP.NS = S.NS;
