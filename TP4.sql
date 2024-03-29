@@ -178,3 +178,56 @@ insert into  thietke values ('truong minh thai',   6       ,    27          );
 insert into  thietke values ('le kim dung',   4       ,    20          );
 insert into  thietke values ('truong minh thai',   1       ,    12          );
 
+-- 2. Mở các bảng dữ liệu ra để xem dữ liệu của từng trường và quan sát dữ liệu của từng bảng
+SELECT * FROM KTRUCSU;
+SELECT * FROM CHUTHAU;
+SELECT * FROM CHUNHAN;
+SELECT * FROM CONGNHAN;
+SELECT * FROM CGTRINH;
+SELECT * FROM THAMGIA;
+SELECT * FROM THIETKE;
+
+-- 3. Hãy cgo biết về kiến trúc sư có họ Lê và sinh năm 1956
+SELECT * FROM KTRUCSU
+WHERE HOTEN_KTS LIKE ('le%') AND NAMS_KTS = 1956;
+
+-- 4. Hãy cho biết tên các công trình bắt đầu trong khoảng 1/9/1994 đến 20/10/1994
+SELECT TEN_CTR FROM CGTRINH
+WHERE NGAY_BD BETWEEN '9/1/1994' AND '10/20/1994';
+
+-- 5. Hãy cho biết tên và địa chỉ các công trình do chủ thầu 'công ty xây dựng số 6' thi công
+SELECT TEN_CTR, DIACHI_CTR FROM CGTRINH
+WHERE TEN_THAU = 'cty xd so 6';
+
+-- 6. Tìm tên và địa chỉ liên lạc của các chủ thầu thi công công trình Cần Thơ do kiến trúc sư Lê Kim Dung thiết kế
+SELECT DISTINCT CT.TEN_THAU, CT.TEL FROM CGTRINH CTR
+JOIN THIETKE TK ON CTR.STT_CTR = TK.STT_CTR
+JOIN CHUTHAU CT ON CTR.TEN_THAU = CT.TEN_THAU
+WHERE CTR.TINH_THANH = 'can tho' AND TK.HOTEN_KTS = 'le kim dung';
+
+-- 7. Hãy cho biết nơi tốt nghiệp của các kiến trúc sư đã thiết kế công trình Khách sạn quốc tế ở Cần Thơ
+SELECT KTS.HOTEN_KTS, KTS.NOI_TN FROM CGTRINH CTR
+JOIN THIETKE TK ON CTR.STT_CTR = TK.STT_CTR
+JOIN KTRUCSU KTS ON KTS.HOTEN_KTS = TK.HOTEN_KTS
+WHERE TEN_CTR = 'khach san quoc te' AND TINH_THANH = 'can tho';
+
+-- 8. Cho biết họ tên, năm sinh và năm vào nghề của các công nhân có chuyên môn hàn hoặc điện đã tham gia các công trình mà chủ thầu Lê Văn Sơn đã trúng thầu
+SELECT HOTEN_CN, NAMS_CN, NAM_VAO_N FROM CONGNHAN
+WHERE CH_MON = 'han' OR CH_MON = 'dien';
+
+-- 9. Những công nhân nào bắt đầu tham gia công trình Khách sạn Quốc tế ở Cần Thơ trong giai đoạn từ ngày 15/12/1994 đến 31/12/1994
+SELECT TG.HOTEN_CN FROM THAMGIA TG
+JOIN CGTRINH CTR ON TG.STT_CTR = CTR.STT_CTR
+WHERE (TG.NGAY_TGIA BETWEEN '12/15/1994' AND '12/31/1994') AND CTR.TEN_CTR = 'khach san quoc te' AND CTR.TINH_THANH = 'can tho';
+
+-- 10. Cho biết họ tên và năm sinh của các kiến trúc sư đã tốt nghiệp ở TP HCM và đã thiết kế ít nhất một công trình có kinh phí đầu tư trên 400 triệu đồng
+SELECT DISTINCT KTS.HOTEN_KTS FROM CGTRINH CTR
+JOIN THIETKE TK ON CTR.STT_CTR = TK.STT_CTR
+JOIN KTRUCSU KTS ON TK.HOTEN_KTS = KTS.HOTEN_KTS
+WHERE CTR.KINH_PHI > 400 AND KTS.NOI_TN = 'tp hcm';
+
+
+
+
+
+
