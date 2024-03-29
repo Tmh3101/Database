@@ -226,6 +226,70 @@ JOIN THIETKE TK ON CTR.STT_CTR = TK.STT_CTR
 JOIN KTRUCSU KTS ON TK.HOTEN_KTS = KTS.HOTEN_KTS
 WHERE CTR.KINH_PHI > 400 AND KTS.NOI_TN = 'tp hcm';
 
+-- 11. Tìm họ tên và chuyên môn của các công nhân tham gia các công trình do kiến trúc sư Lê Thanh Tùng thiết kế
+SELECT CN.HOTEN_CN, CN.CH_MON FROM THIETKE TK
+JOIN THAMGIA TG ON TK.STT_CTR = TG.STT_CTR
+JOIN CONGNHAN CN ON TG.HOTEN_CN = CN.HOTEN_CN
+WHERE HOTEN_KTS = 'le thanh tung';
+
+-- 12. Cho biết công trình có kinh phí cao nhất
+SELECT TEN_CTR FROM CGTRINH
+WHERE KINH_PHI = (
+    SELECT MAX(KINH_PHI) KPLN FROM CGTRINH
+);
+
+-- 13. Cho biết họ tên kiến trúc sư trẻ tuổi nhất
+SELECT HOTEN_KTS FROM KTRUCSU
+WHERE NAMS_KTS = (
+    SELECT MAX(NAMS_KTS) FROM KTRUCSU
+);
+
+-- 14. Tìm tổng kinh phí của các công trình theo từng chủ thầu
+SELECT TEN_THAU, SUM(KINH_PHI) TONGKP FROM CGTRINH
+GROUP BY TEN_THAU
+
+-- 15. Tìm tên và địa chỉ những chủ thầu đã trúng thầu công trình có kinh phí thấp nhất
+SELECT CT.TEN_THAU, CT.DCHI_THAU FROM CGTRINH CGT
+JOIN CHUTHAU CT ON CGT.TEN_THAU = CT.TEN_THAU
+WHERE CGT.KINH_PHI = (
+    SELECT MIN(KINH_PHI) FROM CGTRINH
+);
+
+-- 16. Cho biết học tên các kiến trúc sư có tổng thù lao thiết kế các công trình lớn hơn 25 triệu
+SELECT DISTINCT HOTEN_KTS FROM THIETKE
+WHERE THU_LAO > 25
+
+-- 17. Cho biết sô lượng các kiến trúc sư có tổng thù lao thiết kế các công trình lơn hơn 25 triêu
+SELECT COUNT(*) SL_KTS FROM (
+    SELECT DISTINCT HOTEN_KTS FROM THIETKE
+    WHERE THU_LAO > 25
+);
+
+-- 18. Tính tổng số công trình mà mỗi kiến trúc sư đã thiết kế
+SELECT HOTEN_KTS, COUNT(*) SLTK FROM THIETKE
+GROUP BY HOTEN_KTS;
+
+-- 19. Tính tổng số công nhân đã tham gia mỗi công trình
+SELECT STT_CTR, COUNT(*) FROM THAMGIA
+GROUP BY STT_CTR;
+
+-- 20. Tìm tên và địa chỉ công trình có tổng số công nhân tham gia nhiều nhất
+SELECT TEN_CTR, DIACHI_CTR FROM CGTRINH
+WHERE STT_CTR IN (
+    SELECT STT_CTR FROM THAMGIA
+    GROUP BY STT_CTR
+    HAVING COUNT(*) >= (
+        SELECT MAX(SLCN) SLCNLN FROM (
+            SELECT COUNT(*) SLCN FROM THAMGIA
+            GROUP BY STT_CTR
+        )
+
+    )
+);
+
+-- 21. 
+
+
 
 
 
