@@ -283,7 +283,6 @@ WHERE STT_CTR IN (
             SELECT COUNT(*) SLCN FROM THAMGIA
             GROUP BY STT_CTR
         )
-
     )
 );
 
@@ -297,8 +296,13 @@ JOIN CGTRINH CTR ON TG.STT_CTR = CTR.STT_CTR
 WHERE TG.HOTEN_CN = 'nguyen hong van' AND TG.NGAY_TGIA = '12/16/1994';
 
 -- 23. Cho biết họ tên kiến trúc sư vừa thiết kế các công trình do Phòng dịch vụ Sở Xây dựng thi công, vừa thiết kế các công trình do chủ thầu Lê Văn Sơn thi công
-
-
+SELECT DISTINCT TK.HOTEN_KTS FROM THIETKE TK
+JOIN CGTRINH CTR ON TK.STT_CTR = CTR.STT_CTR
+WHERE CTR.TEN_THAU = 'le van son'
+INTERSECT
+SELECT DISTINCT TK.HOTEN_KTS FROM THIETKE TK
+JOIN CGTRINH CTR ON TK.STT_CTR = CTR.STT_CTR
+WHERE CTR.TEN_THAU = 'phong dich vu so xd'
 
 -- 24. Cho biết tên các công nhân có tham gia các công trình ở Cần Thơ nhưng không tham gia công trình ở Vĩnh Long
 SELECT TG.HOTEN_CN FROM THAMGIA TG
@@ -308,6 +312,44 @@ MINUS
 SELECT TG.HOTEN_CN FROM THAMGIA TG
 JOIN CGTRINH CTR ON TG.STT_CTR = CTR.STT_CTR
 WHERE CTR.TINH_THANH = 'vinh long'
+
+-- 25. Cho biết tên các chủ thầu đã thi công các công trình có kinh phí lơn hơn tất cả các công trình do chủ thầu Phòng dịch vụ sở xây dụng thi công
+SELECT TEN_THAU FROM CGTRINH
+WHERE KINH_PHI > (
+    SELECT MAX(KINH_PHI) FROM (
+        SELECT KINH_PHI FROM CGTRINH
+        WHERE TEN_THAU = 'phong dich vu so xd'
+    )    
+)
+
+-- 26. Cho biết họ tên các kiến trúc sư có thù lao thiết kế cho một công trình nào đó dưới giá trị trung bình thù lao thiết kế của các KTS
+SELECT DISTINCT HOTEN_KTS FROM THIETKE
+WHERE THU_LAO < (
+    SELECT AVG(THU_LAO) FROM THIETKE
+);
+
+-- 27. Cho biết họ tên các công nhân có tổng sô ngày tham gia vào các công trình lớn hơn tổng số ngày tham gia của công nhân Nguyễn Hồng Vân
+SELECT HOTEN_CN, SUM(SO_NGAY) TSNTT FROM THAMGIA
+GROUP BY HOTEN_CN
+HAVING SUM(SO_NGAY) > (
+    SELECT SUM(SO_NGAY) TSNTT FROM THAMGIA
+    WHERE HOTEN_CN = 'nguyen hong van'
+    GROUP BY HOTEN_CN
+)
+
+-- 28. Cho biết họ tên công nhân có tham gia tất cả các công trình
+SELECT HOTEN_CN, COUNT(STT_CTR) SOCTR FROM THAMGIA
+GROUP BY HOTEN_CN
+HAVING COUNT(STT_CTR) = (
+    SELECT COUNT(*) FROM CGTRINH
+)
+
+-- 29. Tìm các cặp tên của chủ thầu có trúng thầu các công trình tại cùng một thành phố
+
+
+
+-- 30. Tìm các cặp tên các công nhân có làm việc chung với nhau trong ít nhất là hai công trình
+
 
 
 
