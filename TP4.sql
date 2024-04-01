@@ -287,8 +287,27 @@ WHERE STT_CTR IN (
     )
 );
 
--- 21. 
+-- 21. Cho biết tên các thành phố và kinh phí trung bình của các công trình của từng thành phố tương ứng
+SELECT TINH_THANH, AVG(KINH_PHI) FROM CGTRINH
+GROUP BY TINH_THANH
 
+-- 22. Cho biết tên và địa chỉ của các công trình mà công nhân Nguyễn Hồng Vân đang tham gia vào ngày 18/12/1994
+SELECT CTR.TEN_CTR, CTR.DIACHI_CTR, TG.NGAY_TGIA FROM THAMGIA TG
+JOIN CGTRINH CTR ON TG.STT_CTR = CTR.STT_CTR
+WHERE TG.HOTEN_CN = 'nguyen hong van' AND TG.NGAY_TGIA = '12/16/1994';
+
+-- 23. Cho biết họ tên kiến trúc sư vừa thiết kế các công trình do Phòng dịch vụ Sở Xây dựng thi công, vừa thiết kế các công trình do chủ thầu Lê Văn Sơn thi công
+
+
+
+-- 24. Cho biết tên các công nhân có tham gia các công trình ở Cần Thơ nhưng không tham gia công trình ở Vĩnh Long
+SELECT TG.HOTEN_CN FROM THAMGIA TG
+JOIN CGTRINH CTR ON TG.STT_CTR = CTR.STT_CTR
+WHERE CTR.TINH_THANH = 'can tho'
+MINUS
+SELECT TG.HOTEN_CN FROM THAMGIA TG
+JOIN CGTRINH CTR ON TG.STT_CTR = CTR.STT_CTR
+WHERE CTR.TINH_THANH = 'vinh long'
 
 
 
