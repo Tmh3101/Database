@@ -187,7 +187,7 @@ SELECT * FROM CGTRINH;
 SELECT * FROM THAMGIA;
 SELECT * FROM THIETKE;
 
--- 3. Hãy cgo biết về kiến trúc sư có họ Lê và sinh năm 1956
+-- 3. Hãy cho biết về kiến trúc sư có họ Lê và sinh năm 1956
 SELECT * FROM KTRUCSU
 WHERE HOTEN_KTS LIKE ('le%') AND NAMS_KTS = 1956;
 
@@ -246,7 +246,7 @@ WHERE NAMS_KTS = (
 
 -- 14. Tìm tổng kinh phí của các công trình theo từng chủ thầu
 SELECT TEN_THAU, SUM(KINH_PHI) TONGKP FROM CGTRINH
-GROUP BY TEN_THAU
+GROUP BY TEN_THAU;
 
 -- 15. Tìm tên và địa chỉ những chủ thầu đã trúng thầu công trình có kinh phí thấp nhất
 SELECT CT.TEN_THAU, CT.DCHI_THAU FROM CGTRINH CGT
@@ -257,7 +257,7 @@ WHERE CGT.KINH_PHI = (
 
 -- 16. Cho biết học tên các kiến trúc sư có tổng thù lao thiết kế các công trình lớn hơn 25 triệu
 SELECT DISTINCT HOTEN_KTS FROM THIETKE
-WHERE THU_LAO > 25
+WHERE THU_LAO > 25;
 
 -- 17. Cho biết sô lượng các kiến trúc sư có tổng thù lao thiết kế các công trình lơn hơn 25 triêu
 SELECT COUNT(*) SL_KTS FROM (
@@ -278,31 +278,29 @@ SELECT TEN_CTR, DIACHI_CTR FROM CGTRINH
 WHERE STT_CTR IN (
     SELECT STT_CTR FROM THAMGIA
     GROUP BY STT_CTR
-    HAVING COUNT(*) >= (
-        SELECT MAX(SLCN) SLCNLN FROM (
-            SELECT COUNT(*) SLCN FROM THAMGIA
-            GROUP BY STT_CTR
-        )
+    HAVING COUNT(*) >= ALL (
+        SELECT COUNT(*) SLCN FROM THAMGIA
+        GROUP BY STT_CTR
     )
 );
 
 -- 21. Cho biết tên các thành phố và kinh phí trung bình của các công trình của từng thành phố tương ứng
 SELECT TINH_THANH, AVG(KINH_PHI) FROM CGTRINH
-GROUP BY TINH_THANH
+GROUP BY TINH_THANH;
 
 -- 22. Cho biết tên và địa chỉ của các công trình mà công nhân Nguyễn Hồng Vân đang tham gia vào ngày 18/12/1994
 SELECT CTR.TEN_CTR, CTR.DIACHI_CTR, TG.NGAY_TGIA FROM THAMGIA TG
 JOIN CGTRINH CTR ON TG.STT_CTR = CTR.STT_CTR
-WHERE TG.HOTEN_CN = 'nguyen hong van' AND TG.NGAY_TGIA = '12/16/1994';
+WHERE TG.HOTEN_CN = 'nguyen hong van' AND '12/18/1994' BETWEEN TG.NGAY_TGIA AND TG.NGAY_TGIA + TG.SO_NGAY ;
 
 -- 23. Cho biết họ tên kiến trúc sư vừa thiết kế các công trình do Phòng dịch vụ Sở Xây dựng thi công, vừa thiết kế các công trình do chủ thầu Lê Văn Sơn thi công
 SELECT DISTINCT TK.HOTEN_KTS FROM THIETKE TK
 JOIN CGTRINH CTR ON TK.STT_CTR = CTR.STT_CTR
-WHERE CTR.TEN_THAU = 'le van son'
+WHERE CTR.TEN_THAU = 'cty xd so 6'
 INTERSECT
 SELECT DISTINCT TK.HOTEN_KTS FROM THIETKE TK
 JOIN CGTRINH CTR ON TK.STT_CTR = CTR.STT_CTR
-WHERE CTR.TEN_THAU = 'phong dich vu so xd'
+WHERE CTR.TEN_THAU = 'phong dich vu so xd';
 
 -- 24. Cho biết tên các công nhân có tham gia các công trình ở Cần Thơ nhưng không tham gia công trình ở Vĩnh Long
 SELECT TG.HOTEN_CN FROM THAMGIA TG
@@ -311,16 +309,14 @@ WHERE CTR.TINH_THANH = 'can tho'
 MINUS
 SELECT TG.HOTEN_CN FROM THAMGIA TG
 JOIN CGTRINH CTR ON TG.STT_CTR = CTR.STT_CTR
-WHERE CTR.TINH_THANH = 'vinh long'
+WHERE CTR.TINH_THANH = 'vinh long';
 
 -- 25. Cho biết tên các chủ thầu đã thi công các công trình có kinh phí lơn hơn tất cả các công trình do chủ thầu Phòng dịch vụ sở xây dụng thi công
 SELECT TEN_THAU FROM CGTRINH
-WHERE KINH_PHI > (
-    SELECT MAX(KINH_PHI) FROM (
-        SELECT KINH_PHI FROM CGTRINH
-        WHERE TEN_THAU = 'phong dich vu so xd'
-    )    
-)
+WHERE KINH_PHI > ALL (
+    SELECT KINH_PHI FROM CGTRINH
+    WHERE TEN_THAU = 'phong dich vu so xd'    
+);
 
 -- 26. Cho biết họ tên các kiến trúc sư có thù lao thiết kế cho một công trình nào đó dưới giá trị trung bình thù lao thiết kế của các KTS
 SELECT DISTINCT HOTEN_KTS FROM THIETKE
@@ -335,24 +331,21 @@ HAVING SUM(SO_NGAY) > (
     SELECT SUM(SO_NGAY) TSNTT FROM THAMGIA
     WHERE HOTEN_CN = 'nguyen hong van'
     GROUP BY HOTEN_CN
-)
+);
 
 -- 28. Cho biết họ tên công nhân có tham gia tất cả các công trình
 SELECT HOTEN_CN, COUNT(STT_CTR) SOCTR FROM THAMGIA
 GROUP BY HOTEN_CN
 HAVING COUNT(STT_CTR) = (
     SELECT COUNT(*) FROM CGTRINH
-)
+);
 
 -- 29. Tìm các cặp tên của chủ thầu có trúng thầu các công trình tại cùng một thành phố
-
-
+SELECT DISTINCT CTR1.TEN_THAU, CTR2.TEN_THAU FROM CGTRINH CTR1, CGTRINH CTR2
+WHERE CTR1.TINH_THANH = CTR2.TINH_THANH AND CTR1.TEN_THAU > CTR2.TEN_THAU;
 
 -- 30. Tìm các cặp tên các công nhân có làm việc chung với nhau trong ít nhất là hai công trình
-
-
-
-
-
-
-
+SELECT TG1.HOTEN_CN, TG2.HOTEN_CN FROM THAMGIA TG1, THAMGIA TG2
+WHERE TG1.STT_CTR = TG2.STT_CTR AND TG1.HOTEN_CN > TG2.HOTEN_CN
+GROUP BY TG1.HOTEN_CN, TG2.HOTEN_CN
+HAVING COUNT(DISTINCT TG1.STT_CTR) > 1;
