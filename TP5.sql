@@ -108,3 +108,39 @@ insert into caidat(idMay,idPM,id,ngaycai) values('p7','log7','11','04-01-2003');
 insert into caidat(idMay,idPM,id,ngaycai) values('p12','log6','15','07-25-2003');
 insert into caidat(idMay,idPM,id,ngaycai) values('p12','log1','16','03-20-2003');
 insert into caidat(idMay,idPM,id,ngaycai) values('p3','log1','17','03-20-2003');
+
+
+-- 2. Loại của máy 'p8'
+SELECT L.TENLOAI FROM MAY M
+JOIN LOAI L ON M.IDLOAI = L.IDLOAI
+WHERE M.IDMAY = 'p8';
+
+-- 3. Tên của các phần mềm 'UNIX'
+SELECT TENPM FROM PHANMEM
+WHERE IDLOAI = 'UNIX';
+
+-- 4. Tên phòng, địa chỉ IP phòng, mã phòng của các máy loại 'UNIX' hoặc 'PCWS'
+SELECT DISTINCT P.TENPHONG, P.IP, P.MP FROM MAY M
+JOIN PHONG P ON M.MP = P.MP
+WHERE M.IDLOAI IN ('UNIX', 'PCWS');
+
+-- 5. Tên phòng, địa chỉ IP phòng, mã phòng của các máy loại 'UNIX' hoặc 'PCWS' ở khu vực '130.120.80', sắp xếp kết quả tăng dần theo mã phòng
+SELECT DISTINCT P.TENPHONG, P.IP, P.MP FROM MAY M
+JOIN PHONG P ON M.MP = P.MP
+WHERE M.IDLOAI IN ('UNIX', 'PCWS') AND P.IP = '130.120.80'
+ORDER BY P.MP;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
