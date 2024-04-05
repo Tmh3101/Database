@@ -130,9 +130,42 @@ JOIN PHONG P ON M.MP = P.MP
 WHERE M.IDLOAI IN ('UNIX', 'PCWS') AND P.IP = '130.120.80'
 ORDER BY P.MP;
 
+-- 6. Số các phần mềm được cài đặt trên máy 'p6'
+SELECT COUNT(*) SPM FROM CAIDAT
+WHERE IDMAY = 'p6';
 
+-- 7. Số các máy đã cài phầm mềm 'log1'
+SELECT COUNT(*) SM FROM CAIDAT
+WHERE IDPM = 'log1';
 
+-- 8. Tên và địa chỉ IP đầy đủ của các máy loại 'TX'
+SELECT TENMAY, IP FROM MAY
+WHERE IDLOAI = 'TX';
 
+-- 9. Tính số phần mềm đã cài đặt trên mỗi máy
+SELECT IDMAY, COUNT(IDPM) SPM FROM CAIDAT
+GROUP BY IDMAY;
+
+-- 10. Tính số lần cài đặt của mỗi phần mềm
+SELECT IDPM, COUNT(IDMAY) SLCD FROM CAIDAT
+GROUP BY IDPM;
+
+-- 11. Giá trung bình của các phần mềm UNIX
+SELECT AVG(GIA) GTB_UNIX FROM PHANMEM
+WHERE IDLOAI = 'UNIX'
+GROUP BY IDLOAI;
+
+-- 12. Ngày mua phần mềm gần nhất
+SELECT MAX(NGAYMUA) NMGN FROM PHANMEM
+
+-- 13. Số máy có ít nhất 2 phần mềm
+SELECT COUNT(*) SLM FROM (
+    SELECT IDMAY, COUNT(IDPM) SPM FROM CAIDAT
+    GROUP BY IDMAY
+    HAVING COUNT(IDPM) >= 2
+);
+
+-- 14. 
 
 
 
