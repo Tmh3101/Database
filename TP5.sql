@@ -165,8 +165,33 @@ SELECT COUNT(*) SLM FROM (
     HAVING COUNT(IDPM) >= 2
 );
 
--- 14. 
+-- 14. Tìm các loại không thuộc loại máy nào
+SELECT IDLOAI FROM LOAI
+MINUS
+SELECT IDLOAI FROM MAY
 
+-- 16. Tìm các loại thuộc cả hai loại máy và loại phần mềm
+SELECT IDLOAI FROM PHANMEM
+INTERSECT
+SELECT IDLOAI FROM MAY
+
+-- 17. Tìm các loại máy không phải là loại phần mềm
+SELECT IDLOAI FROM MAY
+MINUS
+SELECT IDLOAI FROM PHANMEM
+
+-- 18. Địa chỉ IP đầy đủ của các máy cài phần mềm 'log6'
+SELECT M.IP FROM CAIDAT CD
+JOIN MAY M ON CD.IDMAY = M.IDMAY
+WHERE IDPM = 'log6';
+
+-- 19. Địa chỉ IP đầy đủ của các máy cài phần mềm tên 'Oracle 8'
+SELECT M.IP FROM CAIDAT CD
+JOIN MAY M ON CD.IDMAY = M.IDMAY
+JOIN PHANMEM PM ON CD.IDPM = PM.IDPM
+WHERE PM.TENPM = 'Oracle 8';
+
+-- 20.
 
 
 
