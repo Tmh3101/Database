@@ -210,6 +210,21 @@ WHERE NGAYMUA = (
     SELECT MAX(NGAYMUA) FROM PHANMEM
 );
 
+-- 23. Tên của phần mềm PCNT có giá lớn hơn bất kỳ giá của một phần mềm UNIX nào
+SELECT TENPM, GIA FROM PHANMEM
+WHERE IDLOAI = 'PCNT' AND GIA > (
+    SELECT MAX(GIA) FROM PHANMEM
+    WHERE IDLOAI = 'UNIX'
+);
+
+-- 24. Tên của phần mềm UNIX có giá lớn hơn tất cả các giá của các phần mềm PCNT
+SELECT TENPM, GIA FROM PHANMEM
+WHERE IDLOAI = 'UNIX' AND GIA > (
+    SELECT MAX(GIA) FROM PHANMEM
+    WHERE IDLOAI = 'PCNT'
+);
+
+-- 25. Tên của máy có ít nhất một phần mềm chung với máy 'p6'
 
 
 
