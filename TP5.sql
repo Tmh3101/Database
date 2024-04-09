@@ -110,6 +110,8 @@ insert into caidat(idMay,idPM,id,ngaycai) values('p12','log1','16','03-20-2003')
 insert into caidat(idMay,idPM,id,ngaycai) values('p3','log1','17','03-20-2003');
 
 
+
+
 -- 2. Loại của máy 'p8'
 SELECT L.TENLOAI FROM MAY M
 JOIN LOAI L ON M.IDLOAI = L.IDLOAI
@@ -139,7 +141,7 @@ SELECT COUNT(*) SM FROM CAIDAT
 WHERE IDPM = 'log1';
 
 -- 8. Tên và địa chỉ IP đầy đủ của các máy loại 'TX'
-SELECT TENMAY, IP FROM MAY
+SELECT TENMAY, IP||'.'||AD IPDAYDU FROM MAY
 WHERE IDLOAI = 'TX';
 
 -- 9. Tính số phần mềm đã cài đặt trên mỗi máy
@@ -156,7 +158,7 @@ WHERE IDLOAI = 'UNIX'
 GROUP BY IDLOAI;
 
 -- 12. Ngày mua phần mềm gần nhất
-SELECT MAX(NGAYMUA) NMGN FROM PHANMEM
+SELECT MAX(NGAYMUA) NMGN FROM PHANMEM;
 
 -- 13. Số máy có ít nhất 2 phần mềm
 SELECT COUNT(*) SLM FROM (
@@ -168,17 +170,17 @@ SELECT COUNT(*) SLM FROM (
 -- 14. Tìm các loại không thuộc loại máy nào
 SELECT IDLOAI FROM LOAI
 MINUS
-SELECT IDLOAI FROM MAY
+SELECT IDLOAI FROM MAY;
 
 -- 16. Tìm các loại thuộc cả hai loại máy và loại phần mềm
 SELECT IDLOAI FROM PHANMEM
 INTERSECT
-SELECT IDLOAI FROM MAY
+SELECT IDLOAI FROM MAY;
 
 -- 17. Tìm các loại máy không phải là loại phần mềm
 SELECT IDLOAI FROM MAY
 MINUS
-SELECT IDLOAI FROM PHANMEM
+SELECT IDLOAI FROM PHANMEM;
 
 -- 18. Địa chỉ IP đầy đủ của các máy cài phần mềm 'log6'
 SELECT M.IP FROM CAIDAT CD
@@ -225,11 +227,26 @@ WHERE IDLOAI = 'UNIX' AND GIA > (
 );
 
 -- 25. Tên của máy có ít nhất một phần mềm chung với máy 'p6'
+SELECT DISTINCT TENMAY FROM CAIDAT C
+JOIN MAY M ON C.IDMAY = M.IDMAY
+WHERE C.IDPM IN ( 
+    SELECT IDPM FROM CAIDAT
+    WHERE IDMAY = 'p6'
+);
 
-
-
-
-
+-- 26. Tên của máy có tất cả phần mềm chung với máy 'p6'
+SELECT C.IDMAY FROM CAIDAT C
+JOIN (
+    SELECT IDPM FROM CAIDAT
+    WHERE IDMAY = 'p6'
+) TMP ON C.IDPM = TMP.IDPM
+GROUP BY C.IDMAY
+HAVING COUNT(C.IDPM) >= (
+    SELECT COUNT(*) FROM (
+        SELECT IDPM FROM CAIDAT
+        WHERE IDMAY = 'p6'
+    )
+);
 
 
 
