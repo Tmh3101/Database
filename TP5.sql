@@ -183,12 +183,12 @@ MINUS
 SELECT IDLOAI FROM PHANMEM;
 
 -- 18. Địa chỉ IP đầy đủ của các máy cài phần mềm 'log6'
-SELECT M.IP FROM CAIDAT CD
+SELECT M.IP||'.'||M.AD IPDAYDU FROM CAIDAT CD
 JOIN MAY M ON CD.IDMAY = M.IDMAY
 WHERE IDPM = 'log6';
 
 -- 19. Địa chỉ IP đầy đủ của các máy cài phần mềm tên 'Oracle 8'
-SELECT M.IP FROM CAIDAT CD
+SELECT M.IP||'.'||M.AD IDAYDU FROM CAIDAT CD
 JOIN MAY M ON CD.IDMAY = M.IDMAY
 JOIN PHANMEM PM ON CD.IDPM = PM.IDPM
 WHERE PM.TENPM = 'Oracle 8';
@@ -247,6 +247,8 @@ HAVING COUNT(C.IDPM) >= (
         WHERE IDMAY = 'p6'
     )
 );
+
+
 
 
 
