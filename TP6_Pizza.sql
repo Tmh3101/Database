@@ -142,25 +142,66 @@ WHERE PIZZA NOT IN (
 
 -- 10. Tìm tên các quán chỉ phục vụ các bánh mà "Eli" thích (chua xong)
 SELECT QUANPIZZA FROM PHUC_VU
-WHERE QUANPIZZA IN (
-    SELECT DISTINCT QUANPIZZA FROM PHUC_VU
-    WHERE PIZZA IN (
-        SELECT PIZZA FROM AN
-        WHERE TEN = 'Eli'
-    )
-)
+MINUS
+SELECT DISTINCT QUANPIZZA FROM PHUC_VU
+    WHERE PIZZA NOT IN (
+    SELECT PIZZA FROM AN
+    WHERE TEN = 'Eli'
+);
+
+-- 11. Tên quán có phục vụ bánh với giá lớn hơn tất cả bánh phục vụ bởi quán ‘New York Pizza’
+SELECT DISTINCT QUANPIZZA FROM PHUC_VU
+WHERE GIA >= ALL (
+    SELECT GIA FROM PHUC_VU
+    WHERE QUANPIZZA = 'New York Pizza'
+);
+
+-- 12. Tìm tên các quán chỉ phục vụ các bánh có giá nhỏ hơn 10
+SELECT QUANPIZZA FROM PHUC_VU
+MINUS
+SELECT DISTINCT QUANPIZZA FROM PHUC_VU
+WHERE GIA >= 10
+
+-- 13. Tìm tên bánh được phục vụ bởi quán ‘New York Pizza’ và quán ‘Dominos’
+SELECT PIZZA FROM PHUC_VU
+WHERE QUANPIZZA = 'New York Pizza'
+INTERSECT
+SELECT PIZZA FROM PHUC_VU
+WHERE QUANPIZZA = 'Dominos'
+
+-- 14.  Tìm tên bánh được phục vụ bởi quán ‘Little Caesars’ và không phục vụ bởi quán 'Pizza Hut'
+SELECT PIZZA FROM PHUC_VU
+WHERE QUANPIZZA = 'Little Caesars'
+MINUS
+SELECT PIZZA FROM PHUC_VU
+WHERE QUANPIZZA = 'Pizza Hut'
+
+-- 15. Tìm tên các quán có phục vụ tất cả các loại bánh pizza
+SELECT QUANPIZZA FROM PHUC_VU
 GROUP BY QUANPIZZA
 HAVING COUNT(PIZZA) = (
-    SELECT COUNT(PIZZA) FROM AN
-    WHERE TEN = 'Eli'
-    GROUP BY TEN
+    SELECT COUNT(*) FROM (
+        SELECT DISTINCT PIZZA FROM PHUC_VU
+    )
 )
 
+-- 16. Tên quán phục vụ ít nhất 2 bánh pizza mà ‘Gus’ thích
+SELECT QUANPIZZA FROM PHUC_VU
+WHERE PIZZA IN (
+    SELECT PIZZA FROM AN
+    WHERE TEN = 'Gus'
+)
+GROUP BY QUANPIZZA
+HAVING COUNT(PIZZA) >= 2;
 
+-- 17. Tìm tên các quán có phục vụ tất cả các bánh mà ‘Ian’ thích
+SELECT DISTINCT QUANPIZZA FROM PHUC_VU
+WHERE PIZZA IN (
+    SELECT PIZZA FROM AN
+    WHERE TEN = 'Gus'
+);
 
-
-
-
+-- 18. 
 
 
 
