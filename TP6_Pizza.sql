@@ -201,7 +201,11 @@ WHERE PIZZA IN (
     WHERE TEN = 'Gus'
 );
 
--- 18. 
+-- 18. Tên người ăn lui tới ít nhất 3 quán
+
+-- 19. Tính số loại pizza mà mỗi quán có bán
+
+-- 20. Tìm tên người ăn thích các bánh ít nhất là giống các bánh mà Hil thích
 
 
 
