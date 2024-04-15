@@ -183,7 +183,7 @@ HAVING COUNT(PIZZA) = (
     SELECT COUNT(*) FROM (
         SELECT DISTINCT PIZZA FROM PHUC_VU
     )
-)
+);
 
 -- 16. Tên quán phục vụ ít nhất 2 bánh pizza mà ‘Gus’ thích
 SELECT QUANPIZZA FROM PHUC_VU
