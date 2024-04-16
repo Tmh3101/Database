@@ -82,22 +82,22 @@ insert into PHUC_VU values('Chicago Pizza', 'supreme', 8.5);
 --    - THêm ràng buộc gia>0 cho cột "gia" của bảng PHUC_VU
 
 ALTER TABLE NGUOI_AN
-ADD CONSTRAINT pk_nguoian_ten PRIMARY KEY (TEN)
+ADD CONSTRAINT pk_nguoian_ten PRIMARY KEY (TEN);
 
 ALTER TABLE LUI_TOI
-ADD CONSTRAINT fk_luitoi_ten FOREIGN KEY (TEN) REFERENCES NGUOI_AN (TEN)
+ADD CONSTRAINT fk_luitoi_ten FOREIGN KEY (TEN) REFERENCES NGUOI_AN (TEN);
   
 ALTER TABLE LUI_TOI
-ADD CONSTRAINT pk_luitoi_ten_quanPizza PRIMARY KEY (TEN, QUANPIZZA)
+ADD CONSTRAINT pk_luitoi_ten_quanPizza PRIMARY KEY (TEN, QUANPIZZA);
 
 ALTER TABLE AN
-ADD CONSTRAINT fk_an_ten FOREIGN KEY (TEN) REFERENCES NGUOI_AN (TEN)
+ADD CONSTRAINT fk_an_ten FOREIGN KEY (TEN) REFERENCES NGUOI_AN (TEN);
   
 ALTER TABLE AN
-ADD CONSTRAINT pk_an_ten_pizza PRIMARY KEY (TEN, PIZZA)
+ADD CONSTRAINT pk_an_ten_pizza PRIMARY KEY (TEN, PIZZA);
   
 ALTER TABLE PHUC_VU
-ADD CONSTRAINT pk_phucvu_quanPizza_pizza_gia PRIMARY KEY (QUANPIZZA, PIZZA, GIA)
+ADD CONSTRAINT pk_phucvu_quanPizza_pizza_gia PRIMARY KEY (QUANPIZZA, PIZZA, GIA);
 
 -- 2. Cho biết quán 'Pizza Hut' đã phục vụ các bánh pizza nào
 SELECT PIZZA FROM PHUC_VU
@@ -160,21 +160,21 @@ WHERE GIA >= ALL (
 SELECT QUANPIZZA FROM PHUC_VU
 MINUS
 SELECT DISTINCT QUANPIZZA FROM PHUC_VU
-WHERE GIA >= 10
+WHERE GIA >= 10;
 
 -- 13. Tìm tên bánh được phục vụ bởi quán ‘New York Pizza’ và quán ‘Dominos’
 SELECT PIZZA FROM PHUC_VU
 WHERE QUANPIZZA = 'New York Pizza'
 INTERSECT
 SELECT PIZZA FROM PHUC_VU
-WHERE QUANPIZZA = 'Dominos'
+WHERE QUANPIZZA = 'Dominos';
 
 -- 14.  Tìm tên bánh được phục vụ bởi quán ‘Little Caesars’ và không phục vụ bởi quán 'Pizza Hut'
 SELECT PIZZA FROM PHUC_VU
 WHERE QUANPIZZA = 'Little Caesars'
 MINUS
 SELECT PIZZA FROM PHUC_VU
-WHERE QUANPIZZA = 'Pizza Hut'
+WHERE QUANPIZZA = 'Pizza Hut';
 
 -- 15. Tìm tên các quán có phục vụ tất cả các loại bánh pizza
 SELECT QUANPIZZA FROM PHUC_VU
@@ -202,20 +202,23 @@ WHERE PIZZA IN (
 );
 
 -- 18. Tên người ăn lui tới ít nhất 3 quán
+SELECT TEN FROM LUI_TOI
+GROUP BY TEN
+HAVING COUNT(*) >= 3;
 
 -- 19. Tính số loại pizza mà mỗi quán có bán
+SELECT QUANPIZZA, COUNT(PIZZA) SOLOAI FROM PHUC_VU
+GROUP BY QUANPIZZA;
 
 -- 20. Tìm tên người ăn thích các bánh ít nhất là giống các bánh mà Hil thích
-
-
-
-
-
-
-
-
-
-
-
-
-
+SELECT TEN FROM AN
+WHERE PIZZA IN (
+    SELECT PIZZA FROM AN
+    WHERE TEN = 'Hil'
+)
+GROUP BY TEN
+HAVING COUNT(*) >= (
+    SELECT COUNT(PIZZA) FROM an
+    WHERE TEN = 'Hil'
+    GROUP BY TEN
+);
