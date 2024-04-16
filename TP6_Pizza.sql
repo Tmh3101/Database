@@ -140,7 +140,7 @@ WHERE PIZZA NOT IN (
     WHERE TEN = 'Eli'
 );
 
--- 10. Tìm tên các quán chỉ phục vụ các bánh mà "Eli" thích (chua xong)
+-- 10. Tìm tên các quán chỉ phục vụ các bánh mà "Eli" thích
 SELECT QUANPIZZA FROM PHUC_VU
 WHERE QUANPIZZA NOT IN (
     SELECT DISTINCT QUANPIZZA FROM PHUC_VU
@@ -148,11 +148,6 @@ WHERE QUANPIZZA NOT IN (
         SELECT PIZZA FROM AN
         WHERE TEN = 'Eli'
     )
-)
-GROUP BY QUANPIZZA
-HAVING COUNT(*) = (
-    SELECT COUNT(*) FROM AN
-    WHERE TEN = 'Eli'
 );
 
 
