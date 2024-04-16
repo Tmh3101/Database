@@ -142,12 +142,19 @@ WHERE PIZZA NOT IN (
 
 -- 10. Tìm tên các quán chỉ phục vụ các bánh mà "Eli" thích (chua xong)
 SELECT QUANPIZZA FROM PHUC_VU
-MINUS
-SELECT DISTINCT QUANPIZZA FROM PHUC_VU
-    WHERE PIZZA NOT IN (
-    SELECT PIZZA FROM AN
+WHERE QUANPIZZA NOT IN (
+    SELECT DISTINCT QUANPIZZA FROM PHUC_VU
+        WHERE PIZZA NOT IN (
+        SELECT PIZZA FROM AN
+        WHERE TEN = 'Eli'
+    )
+)
+GROUP BY QUANPIZZA
+HAVING COUNT(*) = (
+    SELECT COUNT(*) FROM AN
     WHERE TEN = 'Eli'
 );
+
 
 -- 11. Tên quán có phục vụ bánh với giá lớn hơn tất cả bánh phục vụ bởi quán ‘New York Pizza’
 SELECT DISTINCT QUANPIZZA FROM PHUC_VU
